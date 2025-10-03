@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <title>Listado de Adopciones</title>
+     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  </head>
+  <body>
+
+
+
+    <div class="navbar">
+        <h1>Sistema de Adopciones</h1>
+        <a class="navbar-page" href="{{ url_for('registrar_aviso') }}">Agregar aviso</a>
+        <a class="navbar-page" href="{{ url_for('index') }}">Portada</a>
+        <a class="navbar-page" href="#">Estadísticas</a>
+    </div>
+
+
+    <section>
+        <h2> Listado</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Fechas publicación</th>
+                    <th>Fechas Entrega</th>
+                    <th>Comuna</th>
+                    <th>Sector</th>
+                    <th>Cantidad</th>
+                    <th>Tipo</th>
+                    <th>Edad</th>
+                    <th>Nombre Contacto</th>
+                    <th>Total Fotos</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for aviso in avisos %}
+                <tr onclick="window.location.href='{{ url_for('detalle', aviso_id=aviso.id) }}'" style="cursor: pointer;">
+                    <td>{{ aviso.fecha_ingreso.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ aviso.fecha_entrega.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ aviso.comuna.nombre }}</td>
+                    <td>{{ aviso.sector or '-' }}</td>
+                    <td>{{ aviso.cantidad }}</td>
+                    <td>{{ aviso.tipo | capitalize }}</td>
+                    <td>{{ aviso.edad }} {{ 'meses' if aviso.unidad_medida == 'm' else 'años' }}</td>
+                    <td>{{ aviso.nombre }}</td>
+                    <td>{{ aviso.fotos | length }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td> No hay avisos disponibles</td>
+                </tr>
+                {% endfor %}    
+            </tbody>
+        </table>
+        <div class = "pagination">
+            {% if page > 1 %}
+                <a href="{{ url_for('ver_avisos', page=page-1) }}">Anterior</a>
+            {% endif %}
+            <span>Página {{ page }}</span>
+            {% if avisos|length == 5 %}
+                <a href="{{ url_for('ver_avisos', page=page+1) }}">Siguiente</a>
+            {% endif %}
+        </div>
+    </section>
+  </body>
+</html>

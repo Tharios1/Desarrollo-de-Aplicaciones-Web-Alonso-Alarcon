@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Detalle Aviso</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+
+  <div class="main-container">
+    <h2>Detalle del aviso</h2>
+    {% if aviso%}
+      <div class="detalle-card">
+        <h3> Fotos </h3>
+        {%if aviso.fotos and aviso.fotos | length > 0 %}
+          {% for f in aviso.fotos %}
+            <img src="{{ url_for('static', filename='uploads/' ~ f.nombre_archivo) }}"
+                 alt="Foto"
+                 class="foto-miniatura"
+                 onclick="ampliarFoto(this)">
+          {% endfor %}
+        {% endif %}
+      </div>
+
+      <div class="detalle-info">
+          <h3>Información</h3>
+          <p><strong>Fecha publicación:</strong> {{ aviso.fecha_ingreso.strftime('%Y-%m-%d %H:%M') }}</p>
+          <p><strong>Comuna:</strong> {{ aviso.comuna.nombre if aviso.comuna else '-' }}</p>
+          <p><strong>Sector:</strong> {{ aviso.sector or '-' }}</p>
+          <p><strong>Tipo:</strong> {{ aviso.tipo }}</p>
+          <p><strong>Cantidad:</strong> {{ aviso.cantidad }}</p>
+          <p><strong>Edad:</strong> {{ aviso.edad }} {{ 'meses' if aviso.unidad_medida == 'm' else 'años' }}</p>
+          <p><strong>Fecha de Entrega:</strong>
+            {% if aviso.fecha_entrega %}
+              {{ aviso.fecha_entrega.strftime('%Y-%m-%d') }}
+            {% else %}
+              No especificado
+            {% endif %}
+          </p>
+          <p><strong>Descripción:</strong> {{ aviso.descripcion or '-' }}</p>
+      </div>
+
+      <div class="detalle-contacto">
+        <h3>Contacto</h3>
+          <p><strong>Nombre:</strong> {{ aviso.nombre }}</p>
+          <p><strong>Correo:</strong> {{ aviso.email }}</p>
+          <p><strong>Celular:</strong> {% if aviso.celular %}  {{ aviso.celular }}{% endif %}</p>
+
+          <h4>Otros medios</h4>
+          {% if aviso.contactos and aviso.contactos|length > 0 %}
+            <ul>
+              {% for c in aviso.contactos %}
+                <li>{{ c.nombre }}: {{ c.identificador }}</li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p>Ninguno</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <div id="modalFoto" class="modal">
+        <span id="btnCerrar" class="cerrar" onclick="cerrarFoto()">Cerrar</span>
+        <img class="modal-contenido" id="imgGrande">
+      </div>
+    
+    {% endif %}
+
+  </div>
+
+  <a href="{{ url_for('ver_avisos') }}">Volver al listado</a>
+  <a href="{{ url_for('index') }}"> Volver a la portada</a>
+
+  <script src="{{ url_for('static', filename='js/detail.js') }}"></script>    
+</body>
+</html>
