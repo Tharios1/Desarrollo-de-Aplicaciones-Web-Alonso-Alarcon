@@ -2,28 +2,25 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8">
-    <title>Detalle Aviso</title>
-    <link rel="stylesheet" href="../css/styles.css">
+    <title>Estadísticas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://code.highcharts.com/highcharts.js"></script>
   </head>
   <body>
     
-    <div class="navbar">
-        <h1>Sistema de Adopciones</h1>
-        <a class="navbar-page" href="agregar.html">Agregar aviso</a>
-        <a class="navbar-page" href="listado.html">Ver listado</a>
-        <a class="navbar-page" href="index.html">Portada</a>
-     </div>
+    <div class="main-container">
+      <h2> Estadísticas de Avisos de Adopcion</h2>
+      <div id="chartPorDia" style="width:80%; height: 400px; margin: auto;"></div>
+      <div id="chartPorTipo" style="width:80%; height: 400px; margin: auto;"></div>
+      <div id="chartPorMesTipo" style="width:80%; height: 400px; margin: auto;"></div>
 
-    <h2> Cantidad de aviso por dia</h2>
-    <img src="img/lineas.png" width="500" alt="lineas">
+      <br>
+      <a href="{{ url_for('index') }}"> Volver a la portada</a>
+    </div>
 
-    <h2> Distribución por tipo</h2>
-    <img src="img/torta.png" width="500" alt="torta">
-
-    <h2> Aviso por mes</h2>
-    <img src="img/barras.png" width="500" alt="barra">
-
-    <br>
-    <a href="index.html"> Volver a la portada</a>
+    
+    <script src="{{ url_for('static', filename='js/estadisticas.js') }}"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    
   </body>
 </html>

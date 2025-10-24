@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 import os
+from sqlalchemy import func
 from database import db
 from utilis.validations import validate_aviso
 
@@ -91,6 +92,93 @@ def registrar_aviso():
     comunas = session.query(db.Comuna).all()
     session.close()
     return render_template("agregar.html", regiones=regiones, comunas=comunas)
+
+
+
+@app.route("/api/comentarios", methods=["POST"])
+def agregar_comentario():
+    data = request.get_json()
+    nombre = data.get("nombre", "").strip()
+    texto = data.get("texto", "").strip()
+    aviso_id = data.get("aviso_id")
+
+    if len(nombre) < 3 or len(nombre) > 80 or len(texto) < 5:
+        return jsonify({"error": "Datos inválidos"}), 400
+    
+    session = db.get_session()
+    try:
+        nuevo = db.Comentario(nombre=nombre, texto=texto, aviso_id=aviso_id)
+        session.add(nuevo)
+        session.commit()
+        return jsonify({
+            "id": nuevo.id,
+            "nombre": nuevo.nombre,
+            "texto": nuevo.texto,
+            "fecha": nuevo.fecha.strftime("%Y-%m-%d %H:%M")
+        }), 201
+    finally:
+        session.close()
+
+@app.route("/api/comentarios/<int:aviso_id>")
+def listar_comentarios(aviso_id):
+    session = db.get_session()
+    try:
+        comentarios = session.query(db.Comentario).filter_by(aviso_id=aviso_id).order_by(db.Comentario.fecha.desc()).all()
+        return jsonify([
+            {
+                "nombre": c.nombre,
+                "texto": c.texto,
+                "fecha": c.fecha.strftime("%Y-%m-%d %H:%M")
+            } for c in comentarios
+        ])
+    finally:
+        session.close()
+
+
+@app.route("/estadisticas")
+def estadisticas():
+    return render_template("estadisticas.html")
+
+@app.route("/api/estadisticas")
+def api_estadisticas():
+    session = db.get_session()
+    try:
+
+        
+        avisos_por_dia = (
+            session.query(func.date(db.AvisoAdopcion.fecha_ingreso), func.count(db.AvisoAdopcion.id))
+            .group_by(func.date(db.AvisoAdopcion.fecha_ingreso))
+            .order_by(func.date(db.AvisoAdopcion.fecha_ingreso))
+            .all()
+        )
+
+       
+        avisos_por_tipo = (
+            session.query(db.AvisoAdopcion.tipo, func.count(db.AvisoAdopcion.id))
+            .group_by(db.AvisoAdopcion.tipo)
+            .all()
+        )
+
+        
+        avisos_por_mes_tipo = (
+            session.query(
+                func.extract("month", db.AvisoAdopcion.fecha_ingreso).label("mes"),
+                db.AvisoAdopcion.tipo,
+                func.count(db.AvisoAdopcion.id)
+            )
+            .group_by("mes", db.AvisoAdopcion.tipo)
+            .order_by("mes")
+            .all()
+        )
+
+
+        return jsonify({
+            "por_dia": [{"fecha": f.strftime("%Y-%m-%d %H:%M"), "cantidad": c} for f, c in avisos_por_dia],
+            "por_tipo": [{"tipo": t, "cantidad": c} for t, c in avisos_por_tipo],
+            "por_mes_tipo": [{"mes": int(m), "tipo": t, "cantidad": c} for m, t, c in avisos_por_mes_tipo]
+        })
+    finally:
+        session.close()
 
 if __name__ == "__main__":
     app.run(debug=True)

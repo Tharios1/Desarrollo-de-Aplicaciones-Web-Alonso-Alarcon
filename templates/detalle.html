@@ -59,6 +59,18 @@
         </div>
       </div>
 
+
+      <h3> Agregar comentario</h3>
+      <form id="formComentario">
+        <input type="text" id="nombreComentario" placeholder="Tu nomnbre" required minlength="3" maxlength="80"> <br>
+        <textarea id="textoComentario" rows="4" cols="50" placeholder="Escribir tu comentario...." required minlength="5"></textarea><br>
+        <button type="submit">Agregar comentario</button>
+      </form>
+
+      <h3>Comentarios</h3>
+      <div id="comentarios" data-aviso-id="{{ aviso.id }}"></div>
+
+
       <div id="modalFoto" class="modal">
         <span id="btnCerrar" class="cerrar" onclick="cerrarFoto()">Cerrar</span>
         <img class="modal-contenido" id="imgGrande">
