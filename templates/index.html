@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <title>Portada - Adopciones</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  </head>
+  <body>
+
+
+
+    <!-- navbar -->
+    <div class="navbar">
+        <h1>Sistema de Adopciones</h1>
+        <a class="navbar-page" href="{{ url_for('registrar_aviso') }}">Agregar aviso</a>
+        <a class="navbar-page" href="{{ url_for('ver_avisos') }}">Ver listado</a>
+        <a class="navbar-page" href="{{ url_for('estadisticas') }}">Estadísticas</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories = true) %}
+    {%  if messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %}
+            <div class = "alert alert-{{ category }}">
+                {{ message }}
+            </div>
+          {% endfor %}   
+        </div>
+    {% endif %}
+    {% endwith %}
+
+
+    <div class="main-container">
+    <h2>Últimos avisos publicados</h2>
+
+    {% if avisos and avisos|length > 0 %}
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha publicación</th>
+            <th>Comuna</th>
+            <th>Sector</th>
+            <th>Cantidad Tipo edad</th>
+            <th>Foto</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for aviso in avisos %}
+            <tr onclick="window.location.href='{{ url_for('detalle', aviso_id=aviso.id) }}'">
+              <td>{{ aviso.fecha_ingreso.strftime('%Y-%m-%d %H:%M') }}</td>
+              <td>{{ aviso.comuna.nombre if aviso.comuna else '-' }}</td>
+              <td>{{ aviso.sector or '-' }}</td>
+              <td>{{ aviso.cantidad }} {{ aviso.tipo }}<br>{{ aviso.edad }} {{ 'meses' if aviso.unidad_medida == 'm' else 'años' }}</td>
+              <td>
+                {% if aviso.fotos and aviso.fotos|length > 0 %}
+                  <img src="{{ url_for('static', filename='uploads/' ~ aviso.fotos[0].nombre_archivo) }}"
+                       alt="Foto"
+                       class="foto-tabla">
+                {% else %}
+                  <span>Sin foto</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No hay publicaciones todavía.</p>
+    {% endif %}
+  </div>
+  </body>
+</html>

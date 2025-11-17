@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Tarea 4</title>
+
+<link rel="stylesheet" th:href="@{/css/style.css}" />
+
+</head>
+<body>
+    <h2 style="text-align:center;">Evaluar Avisos</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Sector</th>
+                <th>Cantidad</th>
+                <th>Tipo</th>
+                <th>Edad</th>
+                <th>Comuna</th>
+                <th>Nota</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="a : ${avisos}">
+                <td th:text="${a.id}"></td>
+                <td th:text="${#temporals.format(a.fechaPublicacion,'yyyy-MM-dd')}"></td>
+                <td th:text="${a.sector}"></td>
+                <td th:text="${a.cantidad}"></td>
+                <td th:text="${a.tipo}"></td>
+                <td th:text="${a.edad}"></td>
+                <td th:text="${a.comuna.nombre}"></td>
+                <td th:text="${a.promedio != null ? a.promedio : '-'}"></td>
+                <td><button th:onclick="'abrirModal(' + ${a.id} + ')'">Evaluar</button></td>
+            </tr>
+        </tbody>
+    </table>
+    <div id="modal">
+        <div>
+            <h3> Evaluar aviso</h3>
+            <input type="hidden" id="id-aviso">
+            <select id="valor-nota">
+                <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                <option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option>
+            </select>
+            <br><br>
+            <button onclick="enviarNota()">Agregar Nota</button>
+            <button onclick="cerrarModal()">Cancelar</button>
+        </div>
+    </div>
+    <script th:src="@{/js/visual.js}"></script>
+</body>
+</html>
