@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <title>Agregar - Adopciones</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    
+
+  <div class="navbar">
+    <h1>Sistema de Adopciones</h1>
+    <a class="navbar-page" href="{{ url_for('index') }}">Portada</a>
+    <a class="navbar-page" href="{{ url_for('ver_avisos') }}">Ver listado</a>
+    <a class="navbar-page" href="#">Estadísticas</a>
+  </div>
+
+
+  <div class="main-container">
+    <h2>Agregar un nuevo aviso de adopcion</h2>
+    <form id = "formAviso" name="myForm" method="post" enctype="multipart/form-data">
+      <h3> Dónde?</h3>
+      <label for = "region"> Región:</label> 
+      <select id = "region" name="region" required>
+        <option value="">Seleccione</option>
+        {% for r in regiones %}
+          <option value="{{ r.id }}">{{ r.nombre }}</option>
+        {% endfor %}
+      </select>
+      <br>
+
+      <label for = "comuna"> Comuna:</label> 
+      <select id = "comuna" name="comuna_id"  required>
+        <option value="">Seleccione</option>
+        {% for c in comunas %}
+          <option value="{{ c.id }}" data-region="{{ c.region_id }}">{{ c.nombre }}</option>
+        {% endfor %}
+      </select>
+      <br>
+
+      <label for = "sector"> Sector:</label>
+      <input type = "text" id = "sector" name="sector"  maxlength = "100">
+      <br>
+
+      <h3>Datos contacto</h3>
+      <label for = "nombre"> Nombre:</label>
+      <input type = "text" id = "nombre" name="nombre"  required>
+      <br>
+
+      <label for = "email"> Email:</label>
+      <input type = "email" id = "email" name="email" required>
+      <br>
+
+      <label for = "telefono"> Teléfeno:</label>
+      <input type = "tel" id = "telefono" name="telefono" placeholder="+569.12345678">
+      <br>
+
+      
+        
+
+      <h3>Detalle del aviso</h3>
+
+      <label for="tipo">Tipo:</label>
+      <select id = "tipo" name="tipo" required>
+        <option value="">Seleccione</option>
+        <option value="gato">Gato</option>
+        <option value="perro">Perro</option>
+      </select>
+      <br>
+
+      <label for = "cantidad"> Cantidad:</label>
+      <input type = "number" id = "cantidad" name="cantidad" min="1" required>
+      <br>
+
+      <label for = "edad"> Edad:</label>
+      <input type = "number" id = "edad" name="edad" min = "1" required>
+      <select id = "unidad_medida" name = "unidad_medida" required>
+        <option value="m">Meses</option>
+        <option value="a">Años</option>
+      </select>
+      <br>
+
+      <label for = "fechaEntrega">Fecha de entrega:</label>
+      <input type = "date" id = "fechaEntrega" name="fechaEntrega" required>
+      <br>
+
+      <label for = "descripcion">Descripcion:</label>
+      <textarea id = "descripcion" name="descripcion" cols="50" rows="10"></textarea>
+      <br>
+
+      <h3>Fotos</h3>
+      <input type="file" id="foto1" name="fotos" accept="image/*" required>
+      <div id="masFotos"></div>
+      <button type="button" onclick="agregarFoto()">Agregar otra foto</button>
+      <br>
+
+      <h3>Otros medios de contacto (opcional)</h3>
+
+      <div id="contactosContainer">
+        <div class="contacto-item">
+          <label>Contactar por:</label>
+          <select name="contactos[0][nombre]">
+            <option value="">Seleccione</option>
+            <option value="whatsapp">WhatsApp</option>
+            <option value="telegram">Telegram</option>
+            <option value="X">X</option>
+            <option value="instagram">Instagram</option>
+            <option value="tiktok">TikTok</option>
+            <option value="otra">Otra</option>
+          </select>
+
+          <input type="text"
+                  name="contactos[0][identificador]"
+                  placeholder="ID o URL (4-50 caracteres)">
+        </div>
+      </div>
+
+      <div id="masContactos"></div>
+      <button type="button" id="btnAddContacto" onclick="agregarOtroContacto()">Agregar otro contacto</button>
+      <br><br>
+
+      <button type="button" id="submit-btn">Agregar este aviso de adopción</button>
+    </form>
+
+
+    <div id="val-box" hidden>
+      <p id="val-msg"></p>
+      <ul id="val-list"></ul>
+    </div>
+  </div>
+  <script src="{{ url_for('static', filename='js/form.js') }}"></script>
+</body>
+</html>
